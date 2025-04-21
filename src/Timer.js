@@ -1,40 +1,45 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 
 class Timer extends Component {
-  state = {
-    time: 0,
-    color: "#" + Math.floor(Math.random() * 16777215).toString(16)
-  };
-
-  // add your code here
-
-  render() {
-    const { time, color } = this.state;
-    return (
-      <section className="Timer" style={{ background: color }}>
-        <h1>{time}</h1>
-        <button onClick={this.stopClock}>Stop</button>
-        <aside className="mountText">Mounted</aside>
-        <small onClick={this.handleClose}>X</small>
-      </section>
-    );
+  constructor(props) {
+    super(props);
+    this.state = {
+      time: 0
+    };
   }
 
-  //clock functions
+  // Increments time every second
   clockTick = () => {
     this.setState(prevState => ({
       time: prevState.time + 1
     }));
   };
 
-  stopClock = () => {
-    clearInterval(this.interval);
-  };
+  // Start ticking when mounted
+  componentDidMount() {
+    this.interval = setInterval(this.clockTick, 1000);
+  }
 
-  // for the 'x' button,
-  handleClose = () => {
+  // Stop ticking when unmounted
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  handleRemove = () => {
     this.props.removeTimer(this.props.id);
   };
+
+  render() {
+    return (
+      <div className="ui card">
+        <div className="content">
+          <h3 className="header">Timer ID: {this.props.id}</h3>
+          <p>Time Elapsed: {this.state.time} seconds</p>
+          <button onClick={this.handleRemove} className="ui red button">Remove</button>
+        </div>
+      </div>
+    );
+  }
 }
 
 export default Timer;
